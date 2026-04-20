@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}ResumeAI - AI-Powered Resume Analysis{% endblock %}
+
+{% block content %}
+<!-- Navigation -->
+<nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center">
+                <h1 class="text-2xl font-bold text-primary">ResumeAI</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="{% url 'login' %}" class="text-slate-600 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Login
+                </a>
+                <a href="{% url 'signup' %}" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div class="text-center">
+            <h1 class="text-4xl sm:text-6xl font-bold text-slate-900 mb-6">
+                AI-Powered
+                <span class="text-primary"> Resume Analysis</span>
+            </h1>
+            <p class="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
+                Get instant feedback on your resume with our advanced AI analyzer. Improve structure, grammar, ATS compatibility, and readability to land your dream job.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'signup' %}" class="bg-primary hover:bg-blue-700 text-white text-lg px-8 py-3 rounded-md font-medium transition-colors inline-flex items-center justify-center">
+                    Start Analyzing
+                    <i data-lucide="arrow-right" class="ml-2 h-5 w-5"></i>
+                </a>
+                <a href="#features" class="border border-slate-300 hover:border-slate-400 text-slate-700 text-lg px-8 py-3 rounded-md font-medium transition-colors inline-flex items-center justify-center">
+                    Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">Comprehensive Resume Analysis</h2>
+            <p class="text-xl text-slate-600">Our AI evaluates every aspect of your resume to help you stand out</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Feature 1: Structure Analysis -->
+            <div class="text-center p-6 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="file-text" class="text-primary h-8 w-8"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-2">Structure Analysis</h3>
+                <p class="text-slate-600">Evaluate layout, organization, and formatting for maximum impact</p>
+            </div>
+            
+            <!-- Feature 2: Grammar Check -->
+            <div class="text-center p-6 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="check-circle" class="text-success h-8 w-8"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-2">Grammar Check</h3>
+                <p class="text-slate-600">Detect and fix grammar, spelling, and language issues</p>
+            </div>
+            
+            <!-- Feature 3: ATS Optimization -->
+            <div class="text-center p-6 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="search" class="text-warning h-8 w-8"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-2">ATS Optimization</h3>
+                <p class="text-slate-600">Ensure your resume passes Applicant Tracking Systems</p>
+            </div>
+            
+            <!-- Feature 4: Readability Score -->
+            <div class="text-center p-6 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="eye" class="text-purple-600 h-8 w-8"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900 mb-2">Readability Score</h3>
+                <p class="text-slate-600">Improve clarity and readability for better engagement</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-slate-900 mb-4">How It Works</h2>
+            <p class="text-xl text-slate-600">Simple, fast, and effective resume analysis in three steps</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Step 1 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="text-2xl font-bold text-white">1</span>
+                </div>
+                <h3 class="text-xl font-semibold text-slate-900 mb-3">Upload Your Resume</h3>
+                <p class="text-slate-600">Upload your resume in PDF or DOCX format. Our system supports files up to 10MB.</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="text-2xl font-bold text-white">2</span>
+                </div>
+                <h3 class="text-xl font-semibold text-slate-900 mb-3">AI Analysis</h3>
+                <p class="text-slate-600">Our advanced AI analyzes your resume across multiple dimensions including structure, grammar, and ATS compatibility.</p>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span class="text-2xl font-bold text-white">3</span>
+                </div>
+                <h3 class="text-xl font-semibold text-slate-900 mb-3">Get Detailed Feedback</h3>
+                <p class="text-slate-600">Receive comprehensive feedback with specific suggestions to improve your resume and increase your chances of landing interviews.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="py-20 bg-primary">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-white mb-4">Ready to Improve Your Resume?</h2>
+        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of job seekers who have improved their resumes with ResumeAI and landed their dream jobs.
+        </p>
+        <a href="{% url 'signup' %}" class="bg-white text-primary hover:bg-slate-100 text-lg px-8 py-3 rounded-md font-medium transition-colors inline-flex items-center">
+            Get Started Free
+            <i data-lucide="arrow-right" class="ml-2 h-5 w-5"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}
