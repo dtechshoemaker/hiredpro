@@ -114,6 +114,24 @@ python manage.py runserver 0.0.0.0:8000
 
 The Django application will be available at `http://localhost:8000`
 
+## Render Deployment
+
+This project includes Render config files:
+
+- `render.yaml` creates a web service and a PostgreSQL database.
+- `build.sh` installs dependencies, collects static files, and runs migrations.
+- `Procfile` starts Django with Gunicorn.
+- `runtime.txt` pins the Python version.
+
+In Render, set these environment variables as secrets:
+
+```env
+SECRET_KEY=your_django_secret_key
+OPENROUTER_API_KEY=your_openrouter_api_key
+```
+
+Render will provide `DATABASE_URL` automatically when you deploy from `render.yaml`. Keep `.env` local only; do not push it to GitHub.
+
 ## 📱 Usage
 
 1. **Sign up** for a new account or **log in** to existing account

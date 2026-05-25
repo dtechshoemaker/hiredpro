@@ -205,16 +205,19 @@ REST_FRAMEWORK = {
 }
 
 # WhiteNoise settings
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Login/Logout URLs
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
-
-import os
-import dj_database_url
-from pathlib import Path
 
 # OpenRouter API settings
 OPENROUTER_API_KEY = config_value('OPENROUTER_API_KEY', default='')

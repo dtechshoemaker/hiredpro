@@ -1,1 +1,1 @@
-web: gunicorn hiredpro.wsgi
+web: gunicorn resumeai_django.wsgi:application
