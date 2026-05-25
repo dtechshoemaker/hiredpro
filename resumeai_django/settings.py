@@ -1,15 +1,45 @@
 import os
 from pathlib import Path
-from decouple import config
+from decouple import Config, RepositoryEnv, UndefinedValueError, config
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+DOTENV_PATH = BASE_DIR / '.env'
+dotenv_config = Config(RepositoryEnv(str(DOTENV_PATH))) if DOTENV_PATH.exists() else None
+
+
+def config_value(name, default=''):
+    if dotenv_config is not None:
+        try:
+            value = dotenv_config(name)
+            if value != '':
+                return value
+        except UndefinedValueError:
+            pass
+
+    return config(name, default=default)
+
+
+def config_bool(name, default=False):
+    value = config_value(name, default=default)
+    if isinstance(value, bool):
+        return value
+
+    normalized = str(value).strip().lower()
+    if normalized in {'1', 'true', 't', 'yes', 'y', 'on'}:
+        return True
+    if normalized in {'0', 'false', 'f', 'no', 'n', 'off', 'release', 'prod', 'production'}:
+        return False
+
+    return bool(default)
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-hkcecv&kd&18urtp=)893t5oa=r-5*ahe08@8-$5gq%=l1cvo$')
+SECRET_KEY = config_value('SECRET_KEY', default='django-insecure-dev-key-change-me')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config_bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = ['*']
 
@@ -60,16 +90,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'resumeai_django.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('PGDATABASE'),
-        'USER': config('PGUSER'),
-        'PASSWORD': config('PGPASSWORD'),
-        'HOST': config('PGHOST'),
-        'PORT': config('PGPORT'),
+PGDATABASE = config_value('PGDATABASE', default='')
+
+if PGDATABASE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': PGDATABASE,
+            'USER': config_value('PGUSER', default=''),
+            'PASSWORD': config_value('PGPASSWORD', default=''),
+            'HOST': config_value('PGHOST', default='localhost'),
+            'PORT': config_value('PGPORT', default='5432'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -134,4 +174,4 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
 # OpenRouter API settings
-OPENROUTER_API_KEY = config('OPENROUTER_API_KEY', default='')
+OPENROUTER_API_KEY = config_value('OPENROUTER_API_KEY', default='')

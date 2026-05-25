@@ -19,13 +19,13 @@ Both versions provide identical functionality with the same modern design and co
   - Readability Score (clarity, conciseness, flow)
 - **Detailed Feedback** - Specific suggestions for improvement
 - **Analysis History** - View past analyses and track progress
-- **Responsive Design** - Beautiful UI with Tailwind CSS
+- **Responsive Design** - Beautiful UI with responsive CSS
 - **Real-time Processing** - Instant analysis results
 
 ## 🏗️ Technology Stack
 
 ### React + Express.js Version
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Shadcn/ui
+- **Frontend**: React 18, TypeScript, Vite, Shadcn/ui
 - **Backend**: Node.js, Express.js, TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
 - **Authentication**: Replit Auth (OpenID Connect)
@@ -33,7 +33,7 @@ Both versions provide identical functionality with the same modern design and co
 - **AI**: OpenRouter API integration
 
 ### Django Version
-- **Frontend**: Django Templates, Tailwind CSS via CDN
+- **Frontend**: Django Templates, pure CSS
 - **Backend**: Django 5.2, Django REST Framework
 - **Database**: PostgreSQL with Django ORM
 - **Authentication**: Django's built-in User system
@@ -42,16 +42,19 @@ Both versions provide identical functionality with the same modern design and co
 
 ## 🔧 Environment Variables Required
 
-Both versions require the same environment variables:
+Create a local `.env` file for secrets and machine-specific settings. Do not commit `.env`; use `.env.example` as the safe template for other developers.
 
 ```env
-DATABASE_URL=postgresql://...
+SECRET_KEY=your_django_secret_key
+DEBUG=true
 OPENROUTER_API_KEY=your_openrouter_api_key
-PGDATABASE=your_db_name
-PGHOST=your_db_host
-PGPASSWORD=your_db_password
-PGPORT=your_db_port
-PGUSER=your_db_user
+
+# Optional PostgreSQL settings. If these are blank, Django uses local SQLite.
+PGDATABASE=
+PGUSER=
+PGPASSWORD=
+PGHOST=localhost
+PGPORT=5432
 ```
 
 **React version additionally needs:**

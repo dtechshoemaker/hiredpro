@@ -3,196 +3,156 @@
 {% block title %}Dashboard - ResumeAI{% endblock %}
 
 {% block content %}
-<!-- Navigation -->
-<nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <div class="flex items-center">
-                <h1 class="text-2xl font-bold text-primary">ResumeAI</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <span class="text-slate-600">Welcome, {{ user.username }}!</span>
-                <a href="{% url 'logout' %}" class="text-slate-600 hover:text-slate-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                    Logout
-                </a>
-            </div>
+<nav class="top-nav">
+    <div class="container nav-inner">
+        <h1 class="brand">ResumeAI</h1>
+        <div class="nav-actions">
+            <span>Welcome, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}" class="nav-link">Logout</a>
         </div>
     </div>
 </nav>
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <!-- Upload Section -->
-    <div class="mb-8">
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-            <h2 class="text-2xl font-bold text-slate-900 mb-4">Upload Your Resume</h2>
-            <div id="upload-area" class="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
-                <div class="mx-auto w-12 h-12 bg-primary rounded-full flex items-center justify-center mb-4">
-                    <i data-lucide="upload" class="h-6 w-6 text-white"></i>
-                </div>
-                <h3 class="text-lg font-medium text-slate-900 mb-2">Choose a file or drag it here</h3>
-                <p class="text-slate-600 mb-4">PDF and DOCX files up to 10MB</p>
-                <input type="file" id="file-input" accept=".pdf,.docx" class="hidden">
-                <button id="browse-btn" class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
-                    Browse Files
-                </button>
+<main class="container dashboard-page">
+    <section class="panel upload-panel">
+        <h2>Upload Your Resume</h2>
+        <div id="upload-area" class="upload-area">
+            <div class="upload-icon">
+                <i data-lucide="upload"></i>
             </div>
-            
-            <!-- Loading State -->
-            <div id="loading-state" class="hidden text-center py-8">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                <p class="text-slate-600">Analyzing your resume...</p>
+            <h3>Choose a file or drag it here</h3>
+            <p>PDF and DOCX files up to 10MB</p>
+            <input type="file" id="file-input" accept=".pdf,.docx" class="hidden">
+            <button id="browse-btn" class="button button-primary" type="button">Browse Files</button>
+        </div>
+
+        <div id="loading-state" class="loading-state hidden">
+            <div class="spinner"></div>
+            <p>Analyzing your resume...</p>
+        </div>
+    </section>
+
+    <section id="analysis-results" class="hidden">
+        <div class="panel results-panel">
+            <h2>Analysis Results</h2>
+
+            <div class="overall-score">
+                <div class="score-circle">
+                    <div class="score-inner">
+                        <span id="overall-score"></span>
+                    </div>
+                </div>
+                <h3>Overall Score</h3>
+                <p>Based on structure, grammar, ATS, and readability</p>
+            </div>
+
+            <div class="score-grid">
+                <article class="score-card">
+                    <div class="icon-circle icon-blue">
+                        <i data-lucide="file-text"></i>
+                    </div>
+                    <h4>Structure</h4>
+                    <p id="structure-score" class="score-value text-primary"></p>
+                </article>
+                <article class="score-card">
+                    <div class="icon-circle icon-green">
+                        <i data-lucide="check-circle"></i>
+                    </div>
+                    <h4>Grammar</h4>
+                    <p id="grammar-score" class="score-value text-success"></p>
+                </article>
+                <article class="score-card">
+                    <div class="icon-circle icon-amber">
+                        <i data-lucide="search"></i>
+                    </div>
+                    <h4>ATS</h4>
+                    <p id="ats-score" class="score-value text-warning"></p>
+                </article>
+                <article class="score-card">
+                    <div class="icon-circle icon-purple">
+                        <i data-lucide="eye"></i>
+                    </div>
+                    <h4>Readability</h4>
+                    <p id="readability-score" class="score-value text-purple"></p>
+                </article>
+            </div>
+
+            <div class="analysis-list">
+                <article class="analysis-card">
+                    <h4><i data-lucide="file-text"></i> Structure Analysis</h4>
+                    <div id="structure-feedback"></div>
+                </article>
+
+                <article class="analysis-card">
+                    <h4><i data-lucide="check-circle"></i> Grammar Analysis</h4>
+                    <div id="grammar-feedback"></div>
+                </article>
+
+                <article class="analysis-card">
+                    <h4><i data-lucide="search"></i> ATS Analysis</h4>
+                    <div id="ats-feedback"></div>
+                </article>
+
+                <article class="analysis-card">
+                    <h4><i data-lucide="eye"></i> Readability Analysis</h4>
+                    <div id="readability-feedback"></div>
+                </article>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Analysis Results -->
-    <div id="analysis-results" class="hidden">
-        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
-            <h2 class="text-2xl font-bold text-slate-900 mb-6">Analysis Results</h2>
-            
-            <!-- Overall Score -->
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-32 h-32 rounded-full score-circle mb-4">
-                    <div class="bg-white rounded-full w-24 h-24 flex items-center justify-center">
-                        <span id="overall-score" class="text-3xl font-bold text-slate-900"></span>
-                    </div>
-                </div>
-                <h3 class="text-xl font-semibold text-slate-900">Overall Score</h3>
-                <p class="text-slate-600">Based on structure, grammar, ATS, and readability</p>
-            </div>
-
-            <!-- Score Breakdown -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="file-text" class="text-primary h-8 w-8"></i>
-                    </div>
-                    <h4 class="font-semibold text-slate-900">Structure</h4>
-                    <p id="structure-score" class="text-2xl font-bold text-primary"></p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="check-circle" class="text-success h-8 w-8"></i>
-                    </div>
-                    <h4 class="font-semibold text-slate-900">Grammar</h4>
-                    <p id="grammar-score" class="text-2xl font-bold text-success"></p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="search" class="text-warning h-8 w-8"></i>
-                    </div>
-                    <h4 class="font-semibold text-slate-900">ATS</h4>
-                    <p id="ats-score" class="text-2xl font-bold text-warning"></p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <i data-lucide="eye" class="text-purple-600 h-8 w-8"></i>
-                    </div>
-                    <h4 class="font-semibold text-slate-900">Readability</h4>
-                    <p id="readability-score" class="text-2xl font-bold text-purple-600"></p>
-                </div>
-            </div>
-
-            <!-- Detailed Analysis -->
-            <div class="space-y-6">
-                <!-- Structure Analysis -->
-                <div class="border border-slate-200 rounded-lg p-4">
-                    <h4 class="text-lg font-semibold text-slate-900 mb-3 flex items-center">
-                        <i data-lucide="file-text" class="text-primary h-5 w-5 mr-2"></i>
-                        Structure Analysis
-                    </h4>
-                    <div id="structure-feedback" class="space-y-3"></div>
-                </div>
-
-                <!-- Grammar Analysis -->
-                <div class="border border-slate-200 rounded-lg p-4">
-                    <h4 class="text-lg font-semibold text-slate-900 mb-3 flex items-center">
-                        <i data-lucide="check-circle" class="text-success h-5 w-5 mr-2"></i>
-                        Grammar Analysis
-                    </h4>
-                    <div id="grammar-feedback" class="space-y-3"></div>
-                </div>
-
-                <!-- ATS Analysis -->
-                <div class="border border-slate-200 rounded-lg p-4">
-                    <h4 class="text-lg font-semibold text-slate-900 mb-3 flex items-center">
-                        <i data-lucide="search" class="text-warning h-5 w-5 mr-2"></i>
-                        ATS Analysis
-                    </h4>
-                    <div id="ats-feedback" class="space-y-3"></div>
-                </div>
-
-                <!-- Readability Analysis -->
-                <div class="border border-slate-200 rounded-lg p-4">
-                    <h4 class="text-lg font-semibold text-slate-900 mb-3 flex items-center">
-                        <i data-lucide="eye" class="text-purple-600 h-5 w-5 mr-2"></i>
-                        Readability Analysis
-                    </h4>
-                    <div id="readability-feedback" class="space-y-3"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Analyses -->
     {% if analyses %}
-    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-        <h2 class="text-2xl font-bold text-slate-900 mb-6">Recent Analyses</h2>
-        <div class="space-y-4">
+    <section class="panel">
+        <h2>Recent Analyses</h2>
+        <div class="recent-list">
             {% for analysis in analyses %}
-            <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-slate-300 transition-colors">
+            <article class="recent-item">
                 <div>
-                    <h3 class="font-semibold text-slate-900">{{ analysis.file_name }}</h3>
-                    <p class="text-sm text-slate-600">{{ analysis.created_at|date:"M d, Y g:i A" }}</p>
+                    <h3>{{ analysis.file_name }}</h3>
+                    <p>{{ analysis.created_at|date:"M d, Y g:i A" }}</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-2xl font-bold text-primary">{{ analysis.overall_score }}/100</span>
-                    <button onclick="viewAnalysis({{ analysis.id }})" class="text-primary hover:text-blue-700 font-medium">
-                        View Details
-                    </button>
+                <div class="recent-actions">
+                    <span>{{ analysis.overall_score }}/100</span>
+                    <button onclick="viewAnalysis({{ analysis.id }})" class="button-link" type="button">View Details</button>
                 </div>
-            </div>
+            </article>
             {% endfor %}
         </div>
-    </div>
+    </section>
     {% endif %}
-</div>
+</main>
 
 <script>
-// File upload functionality
 const uploadArea = document.getElementById('upload-area');
 const fileInput = document.getElementById('file-input');
 const browseBtn = document.getElementById('browse-btn');
 const loadingState = document.getElementById('loading-state');
 const analysisResults = document.getElementById('analysis-results');
 
-// Upload area click
 uploadArea.addEventListener('click', () => fileInput.click());
 browseBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     fileInput.click();
 });
 
-// Drag and drop
 uploadArea.addEventListener('dragover', (e) => {
     e.preventDefault();
-    uploadArea.classList.add('border-primary');
+    uploadArea.classList.add('upload-area-active');
 });
 
 uploadArea.addEventListener('dragleave', () => {
-    uploadArea.classList.remove('border-primary');
+    uploadArea.classList.remove('upload-area-active');
 });
 
 uploadArea.addEventListener('drop', (e) => {
     e.preventDefault();
-    uploadArea.classList.remove('border-primary');
+    uploadArea.classList.remove('upload-area-active');
     const files = e.dataTransfer.files;
     if (files.length > 0) {
         handleFile(files[0]);
     }
 });
 
-// File input change
 fileInput.addEventListener('change', (e) => {
     if (e.target.files.length > 0) {
         handleFile(e.target.files[0]);
@@ -200,20 +160,17 @@ fileInput.addEventListener('change', (e) => {
 });
 
 async function handleFile(file) {
-    // Validate file type
     const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!allowedTypes.includes(file.type)) {
         alert('Please upload a PDF or DOCX file');
         return;
     }
 
-    // Validate file size (10MB)
     if (file.size > 10 * 1024 * 1024) {
         alert('File size must be less than 10MB');
         return;
     }
 
-    // Show loading state
     uploadArea.style.display = 'none';
     loadingState.classList.remove('hidden');
 
@@ -238,31 +195,24 @@ async function handleFile(file) {
         displayResults(data);
     } catch (error) {
         alert('Error: ' + error.message);
-        // Reset upload area
         uploadArea.style.display = 'block';
         loadingState.classList.add('hidden');
     }
 }
 
 function displayResults(data) {
-    // Hide loading state
     loadingState.classList.add('hidden');
-    
-    // Show results
     analysisResults.classList.remove('hidden');
-    
-    // Update scores
+
     document.getElementById('overall-score').textContent = data.overallScore + '/100';
     document.getElementById('structure-score').textContent = data.structureScore + '/100';
     document.getElementById('grammar-score').textContent = data.grammarScore + '/100';
     document.getElementById('ats-score').textContent = data.atsScore + '/100';
     document.getElementById('readability-score').textContent = data.readabilityScore + '/100';
-    
-    // Update score circle
+
     const scoreCircle = document.querySelector('.score-circle');
     scoreCircle.style.setProperty('--score-percentage', data.overallScore + '%');
-    
-    // Display detailed feedback
+
     displayFeedback('structure', data.structureAnalysis);
     displayFeedback('grammar', data.grammarAnalysis);
     displayFeedback('ats', data.atsAnalysis);
@@ -272,38 +222,37 @@ function displayResults(data) {
 function displayFeedback(type, analysis) {
     const container = document.getElementById(`${type}-feedback`);
     container.innerHTML = '';
-    
-    // Positive feedback
+
     if (analysis.feedback && analysis.feedback.length > 0) {
         const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'feedback-block';
         feedbackDiv.innerHTML = `
-            <h5 class="font-medium text-success mb-2 flex items-center">
-                <i data-lucide="check" class="h-4 w-4 mr-1"></i>
+            <h5 class="feedback-title text-success">
+                <i data-lucide="check"></i>
                 Strengths
             </h5>
-            <ul class="list-disc pl-5 space-y-1">
-                ${analysis.feedback.map(item => `<li class="text-slate-600">${item}</li>`).join('')}
+            <ul class="feedback-list">
+                ${analysis.feedback.map(item => `<li>${item}</li>`).join('')}
             </ul>
         `;
         container.appendChild(feedbackDiv);
     }
-    
-    // Suggestions
+
     if (analysis.suggestions && analysis.suggestions.length > 0) {
         const suggestionsDiv = document.createElement('div');
+        suggestionsDiv.className = 'feedback-block';
         suggestionsDiv.innerHTML = `
-            <h5 class="font-medium text-warning mb-2 flex items-center">
-                <i data-lucide="lightbulb" class="h-4 w-4 mr-1"></i>
+            <h5 class="feedback-title text-warning">
+                <i data-lucide="lightbulb"></i>
                 Suggestions for Improvement
             </h5>
-            <ul class="list-disc pl-5 space-y-1">
-                ${analysis.suggestions.map(item => `<li class="text-slate-600">${item}</li>`).join('')}
+            <ul class="feedback-list">
+                ${analysis.suggestions.map(item => `<li>${item}</li>`).join('')}
             </ul>
         `;
         container.appendChild(suggestionsDiv);
     }
-    
-    // Re-initialize Lucide icons
+
     lucide.createIcons();
 }
 
@@ -323,7 +272,6 @@ function getCookie(name) {
 }
 
 function viewAnalysis(analysisId) {
-    // This could navigate to a detailed view or load data via AJAX
     alert('View analysis details for ID: ' + analysisId);
 }
 </script>

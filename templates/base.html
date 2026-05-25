@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,64 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ResumeAI - AI-Powered Resume Analysis{% endblock %}</title>
     <meta name="description" content="Get instant feedback on your resume with our advanced AI analyzer. Improve structure, grammar, ATS compatibility, and readability to land your dream job.">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3B82F6',
-                        success: '#10B981',
-                        warning: '#F59E0B',
-                        error: '#EF4444',
-                        slate: {
-                            50: '#F8FAFC',
-                            100: '#F1F5F9',
-                            200: '#E2E8F0',
-                            300: '#CBD5E1',
-                            400: '#94A3B8',
-                            500: '#64748B',
-                            600: '#475569',
-                            700: '#334155',
-                            800: '#1E293B',
-                            900: '#0F172A'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Lucide Icons -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .score-circle {
-            background: conic-gradient(from 0deg, #10B981 0%, #10B981 var(--score-percentage, 0%), #E5E7EB var(--score-percentage, 0%), #E5E7EB 100%);
-        }
-    </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body>
     {% if messages %}
-        <div class="fixed top-4 right-4 z-50 space-y-2">
+        <div class="message-stack">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} bg-white border-l-4 
-                    {% if message.tags == 'success' %}border-success text-success{% elif message.tags == 'error' %}border-error text-error{% else %}border-primary text-primary{% endif %} 
-                    p-4 rounded shadow-lg max-w-sm">
-                    <div class="flex items-center">
-                        <i data-lucide="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% else %}info{% endif %}" class="h-5 w-5 mr-2"></i>
-                        <span class="text-sm">{{ message }}</span>
+                <div class="alert alert-{{ message.tags }}">
+                    <div class="alert-content">
+                        <i data-lucide="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% else %}info{% endif %}"></i>
+                        <span>{{ message }}</span>
                     </div>
                 </div>
             {% endfor %}
@@ -72,67 +26,52 @@
     {% block content %}
     {% endblock %}
 
-    <!-- Footer -->
-    <footer class="bg-slate-800 text-white mt-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- Company Info -->
-                <div class="md:col-span-2">
-                    <h3 class="text-2xl font-bold text-white mb-4">ResumeAI</h3>
-                    <p class="text-slate-300 mb-4 max-w-md">
-                        AI-powered resume analysis tool that helps job seekers improve their resumes with comprehensive feedback on structure, grammar, ATS compatibility, and readability.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-slate-400 hover:text-white transition-colors">
-                            <i data-lucide="twitter" class="h-6 w-6"></i>
-                        </a>
-                        <a href="#" class="text-slate-400 hover:text-white transition-colors">
-                            <i data-lucide="linkedin" class="h-6 w-6"></i>
-                        </a>
-                        <a href="#" class="text-slate-400 hover:text-white transition-colors">
-                            <i data-lucide="github" class="h-6 w-6"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
-                    <ul class="space-y-2">
-                        <li><a href="{% url 'landing' %}" class="text-slate-300 hover:text-white transition-colors">Home</a></li>
-                        {% if user.is_authenticated %}
-                            <li><a href="{% url 'dashboard' %}" class="text-slate-300 hover:text-white transition-colors">Dashboard</a></li>
-                            <li><a href="{% url 'logout' %}" class="text-slate-300 hover:text-white transition-colors">Logout</a></li>
-                        {% else %}
-                            <li><a href="{% url 'login' %}" class="text-slate-300 hover:text-white transition-colors">Login</a></li>
-                            <li><a href="{% url 'signup' %}" class="text-slate-300 hover:text-white transition-colors">Sign Up</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-                
-                <!-- Support -->
-                <div>
-                    <h4 class="text-lg font-semibold text-white mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-slate-300 hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="text-slate-300 hover:text-white transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="text-slate-300 hover:text-white transition-colors">Terms of Service</a></li>
-                        <li><a href="#" class="text-slate-300 hover:text-white transition-colors">Contact Us</a></li>
-                    </ul>
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-company">
+                <h3>ResumeAI</h3>
+                <p>
+                    AI-powered resume analysis tool that helps job seekers improve their resumes with comprehensive feedback on structure, grammar, ATS compatibility, and readability.
+                </p>
+                <div class="social-links">
+                    <a href="#" aria-label="Twitter"><i data-lucide="twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i data-lucide="linkedin"></i></a>
+                    <a href="#" aria-label="GitHub"><i data-lucide="github"></i></a>
                 </div>
             </div>
-            
-            <div class="border-t border-slate-700 mt-8 pt-8 text-center">
-                <p class="text-slate-400">&copy; 2025 ResumeAI. All rights reserved. Built with Django and Tailwind CSS.</p>
+
+            <div>
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="{% url 'landing' %}">Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Login</a></li>
+                        <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                    {% endif %}
+                </ul>
             </div>
+
+            <div>
+                <h4>Support</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2025 ResumeAI. All rights reserved. Built with Django and pure CSS.</p>
         </div>
     </footer>
 
     <script>
-        // Initialize Lucide icons
         lucide.createIcons();
-        
-        // Auto-hide messages after 5 seconds
+
         setTimeout(() => {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {
