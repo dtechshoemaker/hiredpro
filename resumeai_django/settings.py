@@ -212,5 +212,9 @@ LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
 
+import os
+import dj_database_url
+from pathlib import Path
+
 # OpenRouter API settings
 OPENROUTER_API_KEY = config_value('OPENROUTER_API_KEY', default='')
