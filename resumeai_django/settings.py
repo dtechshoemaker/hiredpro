@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import parse_qs, unquote, urlparse
 from decouple import Config, RepositoryEnv, UndefinedValueError, config
 
 
@@ -35,13 +36,43 @@ def config_bool(name, default=False):
     return bool(default)
 
 
+def config_list(name, default=''):
+    value = config_value(name, default=default)
+    if isinstance(value, (list, tuple)):
+        return list(value)
+
+    return [item.strip() for item in str(value).split(',') if item.strip()]
+
+
+def postgres_url_to_database(url):
+    parsed = urlparse(url)
+    query = parse_qs(parsed.query)
+    database = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': unquote(parsed.path.lstrip('/')),
+        'USER': unquote(parsed.username or ''),
+        'PASSWORD': unquote(parsed.password or ''),
+        'HOST': parsed.hostname or '',
+        'PORT': parsed.port or '',
+    }
+
+    sslmode = query.get('sslmode', [config_value('PGSSLMODE', default='')])[0]
+    if sslmode:
+        database['OPTIONS'] = {'sslmode': sslmode}
+    elif config_bool('DATABASE_SSL_REQUIRE', default=False):
+        database['OPTIONS'] = {'sslmode': 'require'}
+
+    return database
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config_value('SECRET_KEY', default='django-insecure-dev-key-change-me')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config_bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config_list('ALLOWED_HOSTS', default='localhost,127.0.0.1')
+CSRF_TRUSTED_ORIGINS = config_list('CSRF_TRUSTED_ORIGINS', default='')
 
 # Application definition
 INSTALLED_APPS = [
@@ -90,9 +121,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'resumeai_django.wsgi.application'
 
 # Database
+DATABASE_URL = config_value('DATABASE_URL', default='')
 PGDATABASE = config_value('PGDATABASE', default='')
 
-if PGDATABASE:
+if DATABASE_URL:
+    DATABASES = {
+        'default': postgres_url_to_database(DATABASE_URL)
+    }
+elif PGDATABASE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -101,6 +137,9 @@ if PGDATABASE:
             'PASSWORD': config_value('PGPASSWORD', default=''),
             'HOST': config_value('PGHOST', default='localhost'),
             'PORT': config_value('PGPORT', default='5432'),
+            'OPTIONS': {
+                'sslmode': config_value('PGSSLMODE', default='prefer'),
+            },
         }
     }
 else:
@@ -152,7 +191,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = config_bool('CORS_ALLOW_ALL_ORIGINS', default=DEBUG)
 CORS_ALLOW_CREDENTIALS = True
 
 # REST Framework settings
