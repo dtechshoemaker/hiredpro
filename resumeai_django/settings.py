@@ -213,6 +213,7 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
     },
 }
+WHITENOISE_USE_FINDERS = config_bool('WHITENOISE_USE_FINDERS', default=True)
 
 # Login/Logout URLs
 LOGIN_URL = '/auth/login/'
